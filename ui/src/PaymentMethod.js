@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import axios from 'axios';
-import './ManualEntry.css';
+import './PaymentMethod.css';
 
-const ManualEntry = () => {
+const PaymentMethod = () => {
   const [formData, setFormData] = useState({
     success_rate: '',
     cashback_offered: '',
@@ -23,19 +23,11 @@ const ManualEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Convert values to numbers before sending to Flask
-    const dataToSend = {
-      success_rate: parseFloat(formData.success_rate),
-      cashback_offered: parseFloat(formData.cashback_offered),
-      transaction_fee: parseFloat(formData.transaction_fee),
-      customer_preference: parseFloat(formData.customer_preference)
-    };
-
     try {
-      const response = await axios.post('http://127.0.0.1:5000/predict', dataToSend);
-      const { recommended } = response.data;
+      const response = await axios.post('http://127.0.0.1:5000/predict', formData);
+      const { recommended, others } = response.data;
       setRecommendedPaymentMethod(recommended);
+      setOtherPaymentOptions(others);
     } catch (error) {
       console.error('Error fetching the recommended payment method:', error);
     }
@@ -101,8 +93,27 @@ const ManualEntry = () => {
           </div>
         </div>
       )}
+
+      {otherPaymentOptions.length > 0 && (
+        <div className="payment-options">
+          <h3>Other Payment Options</h3>
+          {otherPaymentOptions.map((option, index) => (
+            <div className="payment-option" key={index}>
+              <input type="radio" id={`option-${index}`} name="payment" />
+              <label htmlFor={`option-${index}`}>{option}</label>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="order-summary">
+        <h3>Order Summary</h3>
+        <p>Items: </p>
+        <p>Delivery: --</p>
+        <h3>Order Total: --</h3>
+      </div>
     </div>
   );
 };
 
-export default ManualEntry;
+export default PaymentMethod;
