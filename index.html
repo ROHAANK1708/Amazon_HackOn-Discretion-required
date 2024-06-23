@@ -1,77 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Query Service</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .form-group input,
-        .form-group button {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        .response {
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
-        }
-    </style>
+    <title>Budget Manager</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Payment Query Service</h1>
-        <div class="form-group">
-            <label for="query">Ask a question:</label>
-            <input type="text" id="query" placeholder="Enter your payment question">
-        </div>
-        <div class="form-group">
-            <button onclick="submitQuery()">Submit</button>
-        </div>
-        <div class="response" id="response"></div>
-    </div>
-    <script>
-        function submitQuery() {
-            const query = document.getElementById('query').value;
-            fetch('/payment_query', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ query: query })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('response').innerText = data.response;
-            })
-            .catch(error => {
-                document.getElementById('response').innerText = 'Error: ' + error.message;
-            });
-        }
-    </script>
+    <h1>Budget Manager</h1>
+    <form action="{{ url_for('set_limit') }}" method="post">
+        <h2>Set Purchase Limit</h2>
+        <label for="year">Year:</label>
+        <input type="text" name="year" required>
+        <label for="limit">Limit:</label>
+        <input type="number" name="limit" step="0.01" required>
+        <button type="submit">Set Limit</button>
+    </form>
+    <form action="{{ url_for('add_expense') }}" method="post">
+        <h2>Add Expense</h2>
+        <label for="amount">Amount:</label>
+        <input type="number" name="amount" step="0.01" required>
+        <label for="category">Category:</label>
+        <input type="text" name="category" required>
+        <label for="date">Date:</label>
+        <input type="date" name="date" required>
+        <button type="submit">Add Expense</button>
+    </form>
+    <h2>Current Limits and Savings</h2>
+    <ul>
+        {% for year, limit in limits.items() %}
+            <li>{{ year }}: {{ limit }} | <a href="{{ url_for('view_expenses', year=year) }}">View Expenses</a></li>
+        {% endfor %}
+    </ul>
+    <h2>Savings: {{ savings }}</h2>
 </body>
 </html>
