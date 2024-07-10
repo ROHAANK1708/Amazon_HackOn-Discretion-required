@@ -48,10 +48,10 @@ model = tf.keras.models.load_model('D:\Amazon_HackOn-Discretion-required\MODEL\p
 def predict():
     try:
         data = request.get_json()
-        success_rate = float['success_rate']
-        cashback_offered = float['cashback_offered']
-        transaction_fee = float['transaction_fee']
-        customer_preference = float['customer_preference']
+        success_rate = data['success_rate']
+        cashback_offered = data['cashback_offered']
+        transaction_fee = data['transaction_fee']
+        customer_preference = data['customer_preference']
 
         # Prepare the input for the model
         input_data = np.array([[success_rate, cashback_offered, transaction_fee, customer_preference]])
